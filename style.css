@@ -12,23 +12,23 @@ body {
 	flex-direction: column;
 	width: 270px;
 	background-color: rgb(37, 37, 37);
-	padding: 10px;
-	border-radius: 20px;
+	padding: 15px;
+	border-radius: 30px;
 	margin-top: 50px;
 }
 
 .display {
 	height: 80px;
 	width: 270px;
-	background-color: rgb(68, 68, 68);
+	/* background-color: rgb(68, 68, 68); */
 	font-family: Arial, Helvetica, sans-serif;
 	color: white;
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
-	font-size: 40px;
+	font-size: 50px;
 	border-radius: 10px;
-	margin-bottom: 15px;
+	margin-bottom: 25px;
 	margin-top: 10px;
 }
 
