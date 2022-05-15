@@ -1,9 +1,18 @@
-function operate(operator, num1, num2) {
+const display = document.querySelector('.display');
+const lastInput = document.querySelector('.lastInput');
+const equals = document.querySelector('#equals');
+const clearBtn = document.querySelector('#clear');
+
+function operate(operator, one, two) {
 	display.textContent = '';
 	if (operator === 'add') {
-		display.textContent = add(num1, num2);
+		return add(one, two);
 	} else if (operator === 'multiply') {
-		display.textContent = multiply(num1, num2);
+		return multiply(one, two);
+	} else if (operator === 'divide') {
+		return divide(one, two);
+	} else if (operator === 'subtract') {
+		return subtract(one, two);
 	}
 }
 
@@ -23,100 +32,85 @@ function divide(num1, num2) {
 	return num1 / num2;
 }
 
-const one = document.querySelector('#one');
-const two = document.querySelector('#two');
-const three = document.querySelector('#three');
-const four = document.querySelector('#four');
-const five = document.querySelector('#five');
-const six = document.querySelector('#six');
-const seven = document.querySelector('#seven');
-const eight = document.querySelector('#eight');
-const nine = document.querySelector('#nine');
-
-const display = document.querySelector('.display');
-
-const addition = document.querySelector('#addition');
-const multiplication = document.querySelector('#multiplication');
-
-const equals = document.querySelector('#equals');
-const clearBtn = document.querySelector('#clear');
-
-one.addEventListener('click', () => {
-	display.textContent += 1;
-	displayValue = display.textContent;
-});
-
-two.addEventListener('click', () => {
-	display.textContent += 2;
-	displayValue = display.textContent;
-});
-
-three.addEventListener('click', () => {
-	display.textContent += 3;
-	displayValue = display.textContent;
-});
-
-four.addEventListener('click', () => {
-	display.textContent += 4;
-	displayValue = display.textContent;
-});
-
-five.addEventListener('click', () => {
-	display.textContent += 5;
-	displayValue = display.textContent;
-});
-
-six.addEventListener('click', () => {
-	display.textContent += 6;
-	displayValue = display.textContent;
-});
-
-seven.addEventListener('click', () => {
-	display.textContent += 7;
-	displayValue = display.textContent;
-});
-
-eight.addEventListener('click', () => {
-	display.textContent += 8;
-	displayValue = display.textContent;
-});
-
-nine.addEventListener('click', () => {
-	display.textContent += 9;
-	displayValue = display.textContent;
-});
-
 clearBtn.addEventListener('click', clear);
 
 function clear() {
 	display.textContent = '';
 	displayValue = 0;
-	num1 = 0;
-	num2 = 0;
+	lastDisplayValue = 0;
 	operator = '';
+	userInput.length = 0;
+	lastOperation = 0;
 }
 
 let displayValue = 0;
-let num1;
-let num2;
 let operator;
+let lastOperation;
 
-addition.addEventListener('click', () => {
-	num1 = parseInt(displayValue);
-	display.textContent = '';
-	operator = 'add';
-	displayValue = 0;
+const userInput = [];
+
+function inputCheck() {
+	op1 = userInput[0];
+	op2 = userInput[2];
+	operator = userInput[1];
+
+	lastOperation = operate(operator, op1, op2);
+	updateDisplay(lastOperation);
+	userInput.splice(0, 3);
+	userInput.unshift(lastOperation);
+}
+
+equals.addEventListener('click', function () {
+	if (userInput.length === 4) {
+		inputCheck();
+	}
 });
 
-multiplication.addEventListener('click', () => {
-	num1 = parseInt(displayValue);
-	display.textContent = '';
-	operator = 'multiply';
-	displayValue = 0;
+const digits = document.querySelectorAll('.digits');
+let liveDisplay;
+
+digits.forEach(function (digit) {
+	digit.addEventListener('click', function (e) {
+		const element = e.target;
+		if (element.classList.contains('digit')) {
+			if (display.textContent === displayValue) {
+				display.textContent = '';
+			}
+			if (display.textContent === lastOperation) {
+				display.textContent = '';
+			}
+
+			// display.textContent = '';
+			display.textContent += e.target.value;
+		}
+	});
 });
 
-equals.addEventListener('click', () => {
-	displayValue = display.textContent;
-	num2 = parseInt(displayValue);
-	operate(operator, num1, num2);
+const operators = document.querySelectorAll('.operator');
+
+operators.forEach(function (operator) {
+	operator.addEventListener('click', function (e) {
+		const element = e.target;
+		if (element.classList.contains('operator')) {
+			displayValue = display.textContent;
+			updateDisplay(displayValue);
+			console.log(displayValue);
+			console.log(e.target.value);
+			userInput.push(parseInt(displayValue));
+			userInput.push(e.target.value);
+			operator = e.target.value;
+			updateLastInput(`${displayValue} + ${operator}`);
+			if (userInput.length === 4) {
+				inputCheck();
+			}
+		}
+	});
 });
+
+function updateDisplay(input) {
+	display.textContent = input;
+}
+
+function updateLastInput(input) {
+	lastInput.textContent = displayValue;
+}
