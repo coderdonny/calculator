@@ -11,11 +11,11 @@ function operate(operator, one, two) {
 	if (operator === '+') {
 		return add(parseInt(one), parseInt(two));
 	} else if (operator === '*') {
-		return multiply(one, two);
+		return multiply(parseInt(one), parseInt(two));
 	} else if (operator === '/') {
-		return divide(one, two);
+		return divide(parseInt(one), parseInt(two));
 	} else if (operator === '-') {
-		return subtract(one, two);
+		return subtract(parseInt(one), parseInt(two));
 	}
 }
 
@@ -37,8 +37,6 @@ function divide(num1, num2) {
 
 clearBtn.addEventListener('click', clear);
 
-function clear() {}
-
 let firstOp = '';
 let secondOp = '';
 let operatorInput = '';
@@ -49,6 +47,9 @@ digits.forEach(function (digit) {
 	digit.addEventListener('click', function (e) {
 		const element = e.target;
 		if (element.classList.contains('digit')) {
+			if (parseInt(display.textContent) === firstOp) {
+				display.textContent = '';
+			}
 			if (operatorInput == '') {
 				//if no operator was selected, input operand #1
 				num1(parseInt(e.target.value));
@@ -64,16 +65,16 @@ operators.forEach(function (operator) {
 	operator.addEventListener('click', function (e) {
 		const element = e.target;
 		if (element.classList.contains('operator')) {
-			if (firstOp != '' && operatorInput == '') {
+			if (firstOp != '' && operatorInput == '' && secondOp == '') {
 				operatorInput = e.target.value;
 				display.textContent = '';
 			}
 			if (firstOp != '' && secondOp != '' && operatorInput != '') {
 				output.textContent = `${firstOp} ${operatorInput} ${secondOp} =`;
 				firstOp = operate(operatorInput, firstOp, secondOp);
-				operatorInput = '';
 				secondOp = '';
 				display.textContent = firstOp;
+				operatorInput = e.target.value;
 			} else if (
 				firstOp != '' &&
 				secondOp != '' &&
@@ -82,9 +83,9 @@ operators.forEach(function (operator) {
 			) {
 				output.textContent = `${firstOp} ${operatorInput} ${secondOp} =`;
 				firstOp = operate(operatorInput, firstOp, secondOp);
-				operatorInput = '';
 				secondOp = '';
 				display.textContent = firstOp;
+				operatorInput = e.target.value;
 			} else if (firstOp != '' && secondOp == '' && operatorInput == '') {
 				operatorInput = e.target.value;
 				display.textContent = '';
@@ -101,4 +102,13 @@ function num1(input) {
 function num2(input) {
 	secondOp += input;
 	display.textContent += input;
+}
+
+function clear() {
+	firstOp = '';
+	secondOp = '';
+	operatorInput = '';
+	displayValue = 0;
+	output.textContent = '';
+	display.textContent = '';
 }
