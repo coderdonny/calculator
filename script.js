@@ -1,17 +1,20 @@
 const display = document.querySelector('.display');
+const output = document.querySelector('.output');
 const lastInput = document.querySelector('.lastInput');
 const equals = document.querySelector('#equals');
 const clearBtn = document.querySelector('#clear');
+const digits = document.querySelectorAll('.digits');
+const operators = document.querySelectorAll('.operator');
 
 function operate(operator, one, two) {
 	display.textContent = '';
-	if (operator === 'add') {
-		return add(one, two);
-	} else if (operator === 'multiply') {
+	if (operator === '+') {
+		return add(parseInt(one), parseInt(two));
+	} else if (operator === '*') {
 		return multiply(one, two);
-	} else if (operator === 'divide') {
+	} else if (operator === '/') {
 		return divide(one, two);
-	} else if (operator === 'subtract') {
+	} else if (operator === '-') {
 		return subtract(one, two);
 	}
 }
@@ -34,83 +37,68 @@ function divide(num1, num2) {
 
 clearBtn.addEventListener('click', clear);
 
-function clear() {
-	display.textContent = '';
-	displayValue = 0;
-	lastDisplayValue = 0;
-	operator = '';
-	userInput.length = 0;
-	lastOperation = 0;
-}
+function clear() {}
 
+let firstOp = '';
+let secondOp = '';
+let operatorInput = '';
 let displayValue = 0;
-let operator;
-let lastOperation;
-
-const userInput = [];
-
-function inputCheck() {
-	op1 = userInput[0];
-	op2 = userInput[2];
-	operator = userInput[1];
-
-	lastOperation = operate(operator, op1, op2);
-	updateDisplay(lastOperation);
-	userInput.splice(0, 3);
-	userInput.unshift(lastOperation);
-}
-
-equals.addEventListener('click', function () {
-	if (userInput.length === 4) {
-		inputCheck();
-	}
-});
-
-const digits = document.querySelectorAll('.digits');
-let liveDisplay;
+output.textContent = '';
 
 digits.forEach(function (digit) {
 	digit.addEventListener('click', function (e) {
 		const element = e.target;
 		if (element.classList.contains('digit')) {
-			if (display.textContent === displayValue) {
-				display.textContent = '';
+			if (operatorInput == '') {
+				//if no operator was selected, input operand #1
+				num1(parseInt(e.target.value));
+			} else if (operatorInput != '') {
+				//if operator has been selected, input operand #2
+				num2(parseInt(e.target.value));
 			}
-			if (display.textContent === lastOperation) {
-				display.textContent = '';
-			}
-
-			// display.textContent = '';
-			display.textContent += e.target.value;
 		}
 	});
 });
-
-const operators = document.querySelectorAll('.operator');
 
 operators.forEach(function (operator) {
 	operator.addEventListener('click', function (e) {
 		const element = e.target;
 		if (element.classList.contains('operator')) {
-			displayValue = display.textContent;
-			updateDisplay(displayValue);
-			console.log(displayValue);
-			console.log(e.target.value);
-			userInput.push(parseInt(displayValue));
-			userInput.push(e.target.value);
-			operator = e.target.value;
-			updateLastInput(`${displayValue} + ${operator}`);
-			if (userInput.length === 4) {
-				inputCheck();
+			if (firstOp != '' && operatorInput == '') {
+				operatorInput = e.target.value;
+				display.textContent = '';
+			}
+			if (firstOp != '' && secondOp != '' && operatorInput != '') {
+				output.textContent = `${firstOp} ${operatorInput} ${secondOp} =`;
+				firstOp = operate(operatorInput, firstOp, secondOp);
+				operatorInput = '';
+				secondOp = '';
+				display.textContent = firstOp;
+			} else if (
+				firstOp != '' &&
+				secondOp != '' &&
+				operatorInput != '' &&
+				e.target.value === '='
+			) {
+				output.textContent = `${firstOp} ${operatorInput} ${secondOp} =`;
+				firstOp = operate(operatorInput, firstOp, secondOp);
+				operatorInput = '';
+				secondOp = '';
+				display.textContent = firstOp;
+			} else if (firstOp != '' && secondOp == '' && operatorInput == '') {
+				operatorInput = e.target.value;
+				display.textContent = '';
 			}
 		}
 	});
 });
 
-function updateDisplay(input) {
-	display.textContent = input;
+function num1(input) {
+	firstOp += input;
+	display.textContent += input;
 }
 
-function updateLastInput(input) {
-	lastInput.textContent = displayValue;
+function num2(input) {
+	secondOp += input;
+	display.textContent += input;
 }
