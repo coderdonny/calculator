@@ -65,13 +65,19 @@ operators.forEach(function (operator) {
 	operator.addEventListener('click', function (e) {
 		const element = e.target;
 		if (element.classList.contains('operator')) {
-			if (firstOp != '' && operatorInput == '' && secondOp == '') {
+			if (
+				(firstOp != '' && operatorInput == '' && secondOp == '') ||
+				operatorInput === '='
+			) {
 				operatorInput = e.target.value;
 				display.textContent = '';
 			}
 			if (firstOp != '' && secondOp != '' && operatorInput != '') {
 				output.textContent = `${firstOp} ${operatorInput} ${secondOp} =`;
-				firstOp = operate(operatorInput, firstOp, secondOp);
+				firstOp =
+					Math.round(
+						operate(operatorInput, firstOp, secondOp) * 100
+					) / 100;
 				secondOp = '';
 				display.textContent = firstOp;
 				operatorInput = e.target.value;
@@ -82,7 +88,10 @@ operators.forEach(function (operator) {
 				e.target.value === '='
 			) {
 				output.textContent = `${firstOp} ${operatorInput} ${secondOp} =`;
-				firstOp = operate(operatorInput, firstOp, secondOp);
+				firstOp =
+					Math.round(
+						operate(operatorInput, firstOp, secondOp) * 100
+					) / 100;
 				secondOp = '';
 				display.textContent = firstOp;
 				operatorInput = e.target.value;
